@@ -103,7 +103,7 @@ npm start
 
 ## Deploy
 
-O projeto está pronto para deploy na [Vercel](https://vercel.com): basta importar o repositório e configurar `MONGODB_URI`, `JWT_SECRET` e `OMDB_API_KEY` nas variáveis de ambiente do projeto na Vercel (Project Settings → Environment Variables).
+O deploy do projeto está feito na [Vercel](https://watch-with-me-pi.vercel.app/): basta importar o repositório e configurar `MONGODB_URI`, `JWT_SECRET` e `OMDB_API_KEY` nas variáveis de ambiente do projeto na Vercel (Project Settings → Environment Variables).
 
 ## Scripts disponíveis
 
@@ -115,7 +115,3 @@ O projeto está pronto para deploy na [Vercel](https://vercel.com): basta import
 | `npm run lint`    | Executa o ESLint                                |
 | `npm run types`   | Verifica tipos com o TypeScript (`tsc --noEmit`)|
 | `npm run seed`    | Cria/reseta a conta de demonstração no banco    |
-
-## Documentação adicional
-
-Consulte o [GUIA.md](./GUIA.md) para detalhes de arquitetura, decisões técnicas, credenciais de login e o histórico de melhorias aplicadas ao projeto.
