@@ -5,11 +5,13 @@ Catálogo de filmes inspirado na Netflix, construído como teste técnico para o
 ## Funcionalidades
 
 - Cadastro e login de usuário (JWT + senha com hash bcrypt)
+- Avatar do usuário logado: como o login é feito com e-mail/senha (não há OAuth do Google/Gmail), a barra de navegação exibe um avatar gerado a partir do nome/e-mail do usuário (mesma cor/iniciais sempre, sem chamadas externas) — veja a nota sobre isso em [GUIA.md](./GUIA.md#5-avatar-do-usuário)
 - Catálogo com banner de destaque e carrosséis por categoria
-- Busca de títulos consumindo a OMDb API
-- Página de detalhes (pôster, sinopse, elenco, ano, nota IMDb)
+- Busca de títulos consumindo a OMDb API, com **busca automática/instantânea**: os resultados aparecem enquanto você digita (a partir de 2 letras, com debounce), sem precisar apertar Enter, priorizando títulos que começam com o texto digitado
+- Página de detalhes (pôster, sinopse, elenco, ano, nota IMDb), com fundo desfocado ("hero") a partir do pôster do título
 - "Minha Lista": adicionar/remover favoritos, vinculado ao usuário logado
-- Layout responsivo (mobile, tablet e desktop)
+- Pôsteres ausentes ou com erro de carregamento caem graciosamente em um placeholder estilizado, em vez de um ícone de imagem quebrada
+- Layout responsivo (mobile, tablet e desktop), com navbar que fica transparente sobre o banner e sólida ao rolar a página — como na Netflix
 
 ## Tecnologias
 
@@ -89,4 +91,4 @@ O projeto está pronto para deploy na [Vercel](https://vercel.com): basta import
 
 ## Documentação adicional
 
-Consulte o [GUIA.md](./GUIA.md) para detalhes de arquitetura, decisões técnicas e credenciais de login.
+Consulte o [GUIA.md](./GUIA.md) para detalhes de arquitetura, decisões técnicas, credenciais de login e o histórico de melhorias aplicadas ao projeto.

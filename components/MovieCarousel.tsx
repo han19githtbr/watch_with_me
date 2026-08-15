@@ -43,14 +43,16 @@ export default function MovieCarousel({ title, movies }: MovieCarouselProps) {
   if (!movies || movies.length === 0) return null;
 
   return (
-    <div className="mb-10">
-      <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 px-4 sm:px-6">{title}</h2>
+    <div className="mb-8 sm:mb-10">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-2 sm:mb-3 px-4 sm:px-6 lg:px-12">
+        {title}
+      </h2>
       <div className="relative group/carousel">
         {canScrollLeft && (
           <button
             onClick={() => scrollBy(-1)}
             aria-label="Scroll left"
-            className="hidden sm:flex absolute left-0 top-0 bottom-0 z-20 w-12 items-center justify-center bg-gradient-to-r from-netflix-dark/90 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+            className="hidden sm:flex absolute left-0 top-0 bottom-0 z-20 w-12 lg:w-16 items-center justify-center bg-gradient-to-r from-netflix-dark/95 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
           >
             <span className="text-3xl">‹</span>
           </button>
@@ -58,7 +60,7 @@ export default function MovieCarousel({ title, movies }: MovieCarouselProps) {
 
         <div
           ref={scrollerRef}
-          className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 sm:px-6 pb-2 no-scrollbar"
+          className="flex gap-2 sm:gap-2.5 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 sm:px-6 lg:px-12 pb-2 no-scrollbar"
         >
           {movies.map((movie) => (
             <div
@@ -74,7 +76,7 @@ export default function MovieCarousel({ title, movies }: MovieCarouselProps) {
           <button
             onClick={() => scrollBy(1)}
             aria-label="Scroll right"
-            className="hidden sm:flex absolute right-0 top-0 bottom-0 z-20 w-12 items-center justify-center bg-gradient-to-l from-netflix-dark/90 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+            className="hidden sm:flex absolute right-0 top-0 bottom-0 z-20 w-12 lg:w-16 items-center justify-center bg-gradient-to-l from-netflix-dark/95 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
           >
             <span className="text-3xl">›</span>
           </button>

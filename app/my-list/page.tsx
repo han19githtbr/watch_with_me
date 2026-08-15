@@ -58,8 +58,8 @@ export default function MyListPage() {
   return (
     <div className="min-h-screen bg-netflix-dark">
       <Navbar />
-      <div className="pt-16 max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">My List</h1>
+      <div className="pt-24 max-w-[1900px] mx-auto px-4 sm:px-6 lg:px-12 pb-12">
+        <h1 className="font-display text-3xl sm:text-4xl text-white mb-6 sm:mb-8 tracking-wide">My List</h1>
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
             {Array.from({ length: 6 }).map((_, i) => (

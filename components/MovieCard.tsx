@@ -1,9 +1,9 @@
 // components/MovieCard.tsx
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import PosterImage from './PosterImage';
 import type { Movie } from '@/lib/types';
 
 interface MovieCardProps {
@@ -34,20 +34,14 @@ export default function MovieCard({ movie }: MovieCardProps) {
   return (
     <div className="netflix-card relative group w-full">
       <Link href={`/movie/${movie.imdbID}`} className="block">
-        <div className="relative w-full aspect-[2/3] overflow-hidden rounded-md bg-gray-800 shadow-md">
-          {movie.Poster && movie.Poster !== 'N/A' ? (
-            <Image
-              src={movie.Poster}
-              alt={movie.Title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1200px) 18vw, 180px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-gray-400 text-center p-4 text-sm">{movie.Title}</span>
-            </div>
-          )}
+        <div className="relative w-full aspect-[2/3] overflow-hidden rounded-md bg-gray-800 shadow-md ring-1 ring-white/5 group-hover:ring-2 group-hover:ring-white/70 group-hover:shadow-2xl group-hover:shadow-black/80 transition-shadow duration-200">
+          <PosterImage
+            src={movie.Poster}
+            alt={movie.Title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1200px) 18vw, 180px"
+          />
           {/* Desktop hover overlay */}
           <div className="hidden sm:flex absolute inset-0 flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <h3 className="text-white font-semibold text-sm line-clamp-2">{movie.Title}</h3>

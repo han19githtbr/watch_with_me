@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 
 export default function Login() {
@@ -26,9 +27,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-netflix-dark px-4">
-      <div className="bg-black/80 p-6 sm:p-8 rounded max-w-md w-full">
-        <h1 className="text-3xl sm:text-4xl font-bold text-netflix-red mb-6 sm:mb-8">Watch With Me</h1>
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-netflix-dark">
+      {/* Cinematic backdrop, like Netflix's own sign-in page: a dark
+          vignette with a subtle red glow rather than a flat color. */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(60,10,10,0.55),_transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(0,0,0,0.9),_rgba(0,0,0,1))]" />
+
+      <Link
+        href="/"
+        className="absolute top-4 left-4 sm:top-6 sm:left-8 font-display text-2xl sm:text-3xl text-netflix-red tracking-wide"
+      >
+        WATCH WITH ME
+      </Link>
+
+      <div className="relative z-10 bg-black/75 p-6 sm:p-10 rounded max-w-md w-full shadow-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-7">Sign In</h1>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <input
@@ -36,7 +49,7 @@ export default function Login() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-gray-700 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
+              className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
               required
             />
             <input
@@ -44,7 +57,7 @@ export default function Login() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-gray-700 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
+              className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
               required
             />
             {error && (
@@ -59,7 +72,7 @@ export default function Login() {
             </button>
           </div>
         </form>
-        <p className="text-gray-400 text-center mt-4">
+        <p className="text-gray-400 text-center mt-6">
           Don&apos;t have an account?{' '}
           <a href="/register" className="text-white hover:underline">
             Sign up now

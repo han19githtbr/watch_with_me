@@ -1,9 +1,13 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Bebas_Neue } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-body' })
+// A bold, condensed display face for the wordmark and hero/detail titles —
+// the closest publicly-available approximation to Netflix's own condensed
+// sans without using their (unlicensed) custom typeface.
+const bebasNeue = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--font-display' })
 
 export const metadata: Metadata = {
   title: 'Watch With Me - Movie Catalog',
@@ -17,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="bg-netflix-dark">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.variable} ${bebasNeue.variable} font-sans`}>{children}</body>
     </html>
   )
 }

@@ -11,15 +11,23 @@
 
 @layer components {
   .netflix-card {
-    @apply transition-transform duration-300 hover:scale-[1.04] hover:z-10 cursor-pointer;
+    @apply transition-transform duration-300 hover:scale-[1.06] hover:z-10 cursor-pointer;
   }
 
+  /* Red solid button — sign in/up, "Add to My List", other primary form
+     actions. This is the classic Netflix red CTA. */
   .netflix-button {
-    @apply bg-netflix-red hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors;
+    @apply inline-flex items-center justify-center gap-2 bg-netflix-red hover:bg-netflix-red-hover text-white font-bold py-2 px-5 rounded transition-colors;
   }
 
+  /* White "Play" button used only on the hero/title Play CTA. */
+  .netflix-button-play {
+    @apply inline-flex items-center justify-center gap-2 bg-white hover:bg-white/85 text-black font-bold py-2 px-5 rounded transition-colors;
+  }
+
+  /* Translucent gray "More Info" style secondary button. */
   .netflix-button-secondary {
-    @apply bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded backdrop-blur-sm transition-colors;
+    @apply inline-flex items-center justify-center gap-2 bg-gray-500/50 hover:bg-gray-500/40 text-white font-bold py-2 px-5 rounded backdrop-blur-sm transition-colors;
   }
 }
 

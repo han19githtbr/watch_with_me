@@ -1,34 +1,117 @@
 // components/Navbar.tsx
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
+import Avatar from './Avatar';
 
 export default function Navbar() {
   const { user, logout } = useAuthStore();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Netflix's nav is transparent (fading into the hero) at the very top of
+  // the page and becomes a solid bar once you scroll — replicate that here.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
 
   return (
-    <nav className="bg-black/90 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 h-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 h-16 transition-colors duration-300 ${
+        scrolled
+          ? 'bg-black shadow-[0_2px_12px_rgba(0,0,0,0.6)]'
+          : 'bg-gradient-to-b from-black/85 via-black/40 to-transparent'
+      }`}
+    >
+      <div className="max-w-[1900px] mx-auto px-4 sm:px-6 lg:px-12 h-full flex items-center justify-between">
         <Link
           href="/"
-          className="text-lg sm:text-2xl md:text-3xl font-bold text-netflix-red tracking-tight shrink-0"
+          className="font-display text-2xl sm:text-3xl md:text-4xl text-netflix-red tracking-wide shrink-0 leading-none"
         >
-          Watch With Me
+          WATCH WITH ME
         </Link>
+
         {user && (
-          <div className="flex items-center gap-2 sm:gap-4 text-sm sm:text-base">
-            <Link href="/my-list" className="text-white hover:text-netflix-red transition-colors">
+          <div className="flex items-center gap-3 sm:gap-6 text-sm sm:text-base">
+            <Link href="/my-list" className="hidden xs:inline text-white/90 hover:text-white transition-colors">
               My List
             </Link>
-            <span className="hidden sm:inline text-gray-500">|</span>
-            <span className="hidden md:inline text-white truncate max-w-[120px]">{user.name}</span>
-            <button
-              onClick={logout}
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Logout
-            </button>
+
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="flex items-center gap-1.5 sm:gap-2"
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
+                aria-label="Account menu"
+              >
+                <Avatar name={user.name} email={user.email} size={32} />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className={`hidden sm:block w-3.5 h-3.5 text-white transition-transform duration-200 ${
+                    menuOpen ? 'rotate-180' : ''
+                  }`}
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-3 w-60 bg-black/95 border border-white/15 rounded shadow-2xl overflow-hidden text-sm animate-fadeIn">
+                  <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+                    <Avatar name={user.name} email={user.email} size={36} />
+                    <div className="min-w-0">
+                      <p className="text-white font-medium truncate">{user.name}</p>
+                      <p className="text-gray-400 text-xs truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/my-list"
+                    onClick={() => setMenuOpen(false)}
+                    className="xs:hidden block px-4 py-2.5 text-white hover:bg-white/10 transition-colors"
+                  >
+                    My List
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      logout();
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    Sign out of Watch With Me
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

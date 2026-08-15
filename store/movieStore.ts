@@ -13,7 +13,7 @@ interface MovieState {
   clearMovies: () => void;
 }
 
-export const useMovieStore = create<MovieState>((set) => ({
+export const useMovieStore = create<MovieState>((set, get) => ({
   movies: [],
   loading: false,
   error: null,
@@ -33,7 +33,25 @@ export const useMovieStore = create<MovieState>((set) => ({
         throw new Error('Failed to search movies');
       }
       const data = await response.json();
-      set({ movies: data.movies || [], loading: false });
+
+      // With live/debounced search, a slower earlier request can resolve
+      // after a newer one. If the query has since moved on, drop this
+      // response instead of overwriting fresher results.
+      if (get().lastQuery !== trimmed) return;
+
+      // OMDb's "s" search matches titles containing the term anywhere, but
+      // for a live, type-as-you-go search the titles that actually *start*
+      // with what the person typed are the most relevant match — surface
+      // those first instead of leaving OMDb's default ordering as-is.
+      const needle = trimmed.toLowerCase();
+      const movies: Movie[] = [...(data.movies || [])].sort((a, b) => {
+        const aStarts = a.Title.toLowerCase().startsWith(needle) ? 0 : 1;
+        const bStarts = b.Title.toLowerCase().startsWith(needle) ? 0 : 1;
+        if (aStarts !== bStarts) return aStarts - bStarts;
+        return a.Title.localeCompare(b.Title);
+      });
+
+      set({ movies, loading: false });
     } catch {
       set({ error: 'Failed to search movies', loading: false, movies: [] });
     }
