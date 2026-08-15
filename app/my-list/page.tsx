@@ -7,9 +7,17 @@ import MovieCard from '@/components/MovieCard';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
+interface Movie {
+  imdbID: string;
+  Title: string;
+  Year: string;
+  Poster: string;
+  Type: string;
+}
+
 export default function MyList() {
   const { user, isAuthenticated, loadFavorites } = useAuthStore();
-  const [favoriteMovies, setFavoriteMovies] = useState([]);
+  const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

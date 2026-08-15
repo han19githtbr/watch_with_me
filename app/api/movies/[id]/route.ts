@@ -4,10 +4,12 @@ import { getMovieDetails } from '@/lib/omdb';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }  // ← Adicionar Promise
 ) {
   try {
-    const movie = await getMovieDetails(params.id);
+    const { id } = await params;  // ← Aguardar params
+    const movie = await getMovieDetails(id);
+    
     if (!movie) {
       return NextResponse.json(
         { error: 'Movie not found' },

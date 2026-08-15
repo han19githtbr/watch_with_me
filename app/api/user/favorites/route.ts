@@ -97,7 +97,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    user.favorites = user.favorites?.filter(id => id !== movieId) || [];
+    user.favorites = user.favorites?.filter((id: string) => id !== movieId) || [];
     await user.save();
 
     return NextResponse.json({ 
