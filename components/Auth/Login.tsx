@@ -18,17 +18,17 @@ export default function Login() {
 
     try {
       await login(email, password);
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-netflix-dark">
-      <div className="bg-black/80 p-8 rounded max-w-md w-full">
-        <h1 className="text-4xl font-bold text-netflix-red mb-8">Watch With Me</h1>
+    <div className="min-h-screen flex items-center justify-center bg-netflix-dark px-4">
+      <div className="bg-black/80 p-6 sm:p-8 rounded max-w-md w-full">
+        <h1 className="text-3xl sm:text-4xl font-bold text-netflix-red mb-6 sm:mb-8">Watch With Me</h1>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <input
@@ -60,7 +60,7 @@ export default function Login() {
           </div>
         </form>
         <p className="text-gray-400 text-center mt-4">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <a href="/register" className="text-white hover:underline">
             Sign up now
           </a>

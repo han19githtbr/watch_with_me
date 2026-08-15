@@ -2,10 +2,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 
 export default function Register() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,18 +22,18 @@ export default function Register() {
 
     try {
       await register(name, email, password);
-      window.location.href = '/';
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      router.push('/');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-netflix-dark">
-      <div className="bg-black/80 p-8 rounded max-w-md w-full">
-        <h1 className="text-4xl font-bold text-netflix-red mb-8">Watch With Me</h1>
+    <div className="min-h-screen flex items-center justify-center bg-netflix-dark px-4">
+      <div className="bg-black/80 p-6 sm:p-8 rounded max-w-md w-full">
+        <h1 className="text-3xl sm:text-4xl font-bold text-netflix-red mb-6 sm:mb-8">Watch With Me</h1>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <input

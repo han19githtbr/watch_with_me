@@ -2,40 +2,43 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import MovieCard from '@/components/MovieCard';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import type { MovieDetails } from '@/lib/types';
 
-interface Movie {
-  imdbID: string;
-  Title: string;
-  Year: string;
-  Poster: string;
-  Type: string;
-}
-
-export default function MyList() {
-  const { user, isAuthenticated, loadFavorites } = useAuthStore();
-  const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
+export default function MyListPage() {
+  const router = useRouter();
+  const { isAuthenticated, loadFavorites } = useAuthStore();
+  const [favoriteMovies, setFavoriteMovies] = useState<MovieDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      window.location.href = '/';
+      router.replace('/');
       return;
     }
 
     const fetchFavorites = async () => {
+      setLoading(true);
       try {
         await loadFavorites();
-        if (user && user.favorites.length > 0) {
-          const moviePromises = user.favorites.map(async (id) => {
-            const response = await fetch(`/api/movies/${id}`);
-            return response.json();
-          });
-          const movies = await Promise.all(moviePromises);
-          setFavoriteMovies(movies.filter(m => m !== null));
+        const { user: freshUser } = useAuthStore.getState();
+        const favorites = freshUser?.favorites || [];
+
+        if (favorites.length > 0) {
+          const results = await Promise.all(
+            favorites.map((movieId) =>
+              fetch(`/api/movies/${movieId}`)
+                .then((r) => (r.ok ? r.json() : null))
+                .catch(() => null)
+            )
+          );
+          setFavoriteMovies(results.filter((m): m is MovieDetails => m !== null));
+        } else {
+          setFavoriteMovies([]);
         }
       } catch (error) {
         console.error('Error fetching favorites:', error);
@@ -45,7 +48,8 @@ export default function MyList() {
     };
 
     fetchFavorites();
-  }, [isAuthenticated, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return null;
@@ -54,19 +58,23 @@ export default function MyList() {
   return (
     <div className="min-h-screen bg-netflix-dark">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 pt-24">
-        <h1 className="text-3xl font-bold text-white mb-8">My List</h1>
+      <div className="pt-16 max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">My List</h1>
         {loading ? (
-          <div className="text-white text-center py-20">Loading your list...</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="aspect-[2/3] bg-gray-800 rounded-md animate-pulse" />
+            ))}
+          </div>
         ) : favoriteMovies.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-400 text-xl mb-4">Your list is empty</p>
+            <p className="text-gray-400 text-lg sm:text-xl mb-4">Your list is empty</p>
             <Link href="/" className="netflix-button inline-block">
               Browse Movies
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
             {favoriteMovies.map((movie) => (
               <MovieCard key={movie.imdbID} movie={movie} />
             ))}

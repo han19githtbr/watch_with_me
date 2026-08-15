@@ -1,20 +1,15 @@
 // store/movieStore.ts
 import { create } from 'zustand';
-
-interface Movie {
-  imdbID: string;
-  Title: string;
-  Year: string;
-  Poster: string;
-  Type: string;
-}
+import type { Movie, MovieDetails } from '@/lib/types';
 
 interface MovieState {
   movies: Movie[];
   loading: boolean;
   error: string | null;
+  /** Empty string means "no active search" (showing category rows). */
+  lastQuery: string;
   searchMovies: (query: string) => Promise<void>;
-  getMovieDetails: (id: string) => Promise<any>;
+  getMovieDetails: (id: string) => Promise<MovieDetails>;
   clearMovies: () => void;
 }
 
@@ -22,23 +17,25 @@ export const useMovieStore = create<MovieState>((set) => ({
   movies: [],
   loading: false,
   error: null,
+  lastQuery: '',
 
   searchMovies: async (query: string) => {
-    if (!query.trim()) {
-      set({ movies: [], error: null });
+    const trimmed = query.trim();
+    if (!trimmed) {
+      set({ movies: [], error: null, lastQuery: '' });
       return;
     }
 
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, lastQuery: trimmed });
     try {
-      const response = await fetch(`/api/movies/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/movies/search?q=${encodeURIComponent(trimmed)}`);
       if (!response.ok) {
         throw new Error('Failed to search movies');
       }
       const data = await response.json();
       set({ movies: data.movies || [], loading: false });
-    } catch (error) {
-      set({ error: 'Failed to search movies', loading: false });
+    } catch {
+      set({ error: 'Failed to search movies', loading: false, movies: [] });
     }
   },
 
@@ -56,6 +53,6 @@ export const useMovieStore = create<MovieState>((set) => ({
   },
 
   clearMovies: () => {
-    set({ movies: [], error: null });
+    set({ movies: [], error: null, lastQuery: '' });
   },
 }));

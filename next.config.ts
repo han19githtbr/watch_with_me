@@ -3,13 +3,27 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['m.media-amazon.com', 'img.omdbapi.com'],
+    // OMDb serves posters from Amazon's media CDN; img.omdbapi.com is kept
+    // as a fallback in case a title only exposes a proxied poster URL.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.omdbapi.com',
+        pathname: '/**',
+      },
+    ],
   },
-  env: {
-    MONGODB_URI: process.env.MONGODB_URI,
-    JWT_SECRET: process.env.JWT_SECRET,
-    OMD_API_KEY: process.env.OMD_API_KEY,
-  },
+  // NOTE: secrets (MONGODB_URI, JWT_SECRET, OMDB_API_KEY) must never be
+  // declared here. Anything placed under `env` in next.config.ts is
+  // inlined into the client-side JavaScript bundle at build time, which
+  // would leak the database connection string and JWT signing secret to
+  // every visitor's browser. Server-only code (API routes, lib/*) reads
+  // these directly from process.env at runtime instead — no config needed.
 }
 
 export default nextConfig
