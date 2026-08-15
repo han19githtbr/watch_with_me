@@ -4,14 +4,14 @@ Catálogo de filmes inspirado na Netflix, construído como teste técnico para o
 
 ## Funcionalidades
 
-- Cadastro e login de usuário (JWT + senha com hash bcrypt)
+- Cadastro e login de usuário (JWT + senha com hash bcrypt), com botão de mostrar/ocultar senha nos dois formulários
 - Avatar do usuário logado: como o login é feito com e-mail/senha (não há OAuth do Google/Gmail), a barra de navegação exibe um avatar gerado a partir do nome/e-mail do usuário (mesma cor/iniciais sempre, sem chamadas externas) — veja a nota sobre isso em [GUIA.md](./GUIA.md#5-avatar-do-usuário)
 - Catálogo com banner de destaque e carrosséis por categoria
-- Busca de títulos consumindo a OMDb API, com **busca automática/instantânea**: os resultados aparecem enquanto você digita (a partir de 2 letras, com debounce), sem precisar apertar Enter, priorizando títulos que começam com o texto digitado
+- Busca de títulos consumindo a OMDb API, com **busca automática/instantânea**: os resultados aparecem enquanto você digita (a partir de 2 letras, com debounce), sem precisar apertar Enter, priorizando títulos que começam com o texto digitado — disponível tanto na Home quanto em um ícone de lupa na barra de navegação, acessível de qualquer página
 - Página de detalhes (pôster, sinopse, elenco, ano, nota IMDb), com fundo desfocado ("hero") a partir do pôster do título
-- "Minha Lista": adicionar/remover favoritos, vinculado ao usuário logado
+- "Minha Lista": adicionar/remover favoritos, vinculado ao usuário logado, com ícone de "+"/"✓" no estilo Netflix
 - Pôsteres ausentes ou com erro de carregamento caem graciosamente em um placeholder estilizado, em vez de um ícone de imagem quebrada
-- Layout responsivo (mobile, tablet e desktop), com navbar que fica transparente sobre o banner e sólida ao rolar a página — como na Netflix
+- Layout responsivo (mobile, tablet e desktop), com navbar que fica transparente sobre o banner e sólida ao rolar a página, e scrollbar customizada — como na Netflix
 
 ## Tecnologias
 
@@ -48,6 +48,10 @@ cp .env.example .env.local
 | `OMDB_API_KEY`   | Chave gratuita obtida em https://www.omdbapi.com/apikey.aspx                |
 
 `.env.local` nunca deve ser commitado — já está no `.gitignore`.
+
+> `.env.example` também traz `NEXTAUTH_URL`. Ela **não é lida em nenhum lugar do código atual** (a aplicação não usa NextAuth, só JWT próprio) — está lá apenas como referência para uma futura evolução com login social (veja [GUIA.md, seção "Avatar do usuário"](./GUIA.md#5-avatar-do-usuário)). Você pode deixá-la de fora sem nenhum impacto.
+
+**Erro comum ao configurar essas variáveis na Vercel:** cole o valor de `MONGODB_URI` sem aspas em volta e sem espaço/quebra de linha antes ou depois — se o Mongoose receber algo que não começa exatamente com `mongodb://` ou `mongodb+srv://`, o login/cadastro falha com "Internal server error" (`MongoParseError: Invalid scheme`). Como campos "Sensitive" na Vercel não mostram o valor salvo de volta para edição, se desconfiar de um valor colado errado, apague o conteúdo do campo Value e cole de novo do zero.
 
 ## Executando o projeto
 
