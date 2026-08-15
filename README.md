@@ -67,6 +67,29 @@ npm run seed
 
 Isso cria (ou reseta a senha de) um usuário de teste no seu banco configurado em `MONGODB_URI`. As credenciais geradas ficam documentadas no [GUIA.md](./GUIA.md).
 
+## Como fazer login e cadastro (localmente e em produção)
+
+A autenticação (e-mail/senha + JWT) é a mesma em qualquer ambiente — não há nada preso a `localhost`. O que muda entre local e produção é só **onde** as variáveis de ambiente ficam configuradas e se o MongoDB Atlas aceita a conexão de onde a aplicação está rodando.
+
+### Localmente
+
+1. Configure o `.env.local` (veja [Variáveis de ambiente](#variáveis-de-ambiente) acima).
+2. Rode `npm run dev` e abra http://localhost:3000 — a aplicação leva direto para a tela de login.
+3. Para entrar, você tem duas opções:
+   - **Criar sua própria conta:** clique em "Sign up now", preencha nome/e-mail/senha e envie. Você é logado automaticamente após o cadastro.
+   - **Usar a conta de demonstração:** rode `npm run seed` (uma única vez) para criar `demo@watchwithme.com` / `Demo@12345` no banco apontado pelo seu `MONGODB_URI`, e faça login com essas credenciais na tela inicial.
+
+### Em produção (Vercel)
+
+1. **Configure as variáveis de ambiente no projeto da Vercel** (Project Settings → Environment Variables): `MONGODB_URI`, `JWT_SECRET`, `OMDB_API_KEY`. Sem isso, `/api/auth/login` e `/api/auth/register` retornam erro 500.
+2. **Libere o acesso de rede no MongoDB Atlas:** em Atlas → Network Access → Add IP Address → `0.0.0.0/0` ("Allow access from anywhere"). A Vercel usa IPs dinâmicos em cada execução serverless, então restringir por IP fixo bloqueia a conexão em produção.
+3. Faça o deploy (import do repositório na Vercel) e acesse a URL gerada, ex.: `https://<seu-projeto>.vercel.app`.
+4. Para entrar, as mesmas duas opções da versão local funcionam diretamente na URL de produção:
+   - **Qualquer pessoa avaliando o projeto** (recrutador, outros usuários) pode clicar em "Sign up now" na própria tela de produção e criar uma conta na hora — não é necessário nenhuma credencial especial.
+   - Se `MONGODB_URI` em produção apontar para o **mesmo cluster Atlas** usado localmente, a conta demo criada com `npm run seed` (localmente) também funciona para login em produção, já que é o mesmo banco.
+
+> Se o login funcionar localmente mas retornar "Internal server error" em produção, o motivo quase sempre é um dos dois primeiros passos acima (env var faltando ou IP bloqueado no Atlas) — confira os logs da função em Vercel → Deployments → seu deploy → Functions para confirmar.
+
 ## Build de produção
 
 ```bash

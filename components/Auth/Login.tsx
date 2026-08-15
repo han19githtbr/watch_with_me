@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import PasswordInput from '@/components/PasswordInput';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -52,12 +53,11 @@ export default function Login() {
               className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
               required
             />
-            <input
-              type="password"
+            <PasswordInput
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
+              autoComplete="current-password"
               required
             />
             {error && (

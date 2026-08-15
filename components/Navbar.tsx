@@ -2,18 +2,60 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useMovieStore } from '@/store/movieStore';
 import Link from 'next/link';
 import Avatar from './Avatar';
+import { SearchIcon, XIcon } from './icons';
 
 export default function Navbar() {
   const { user, logout } = useAuthStore();
+  const searchMovies = useMovieStore((s) => s.searchMovies);
+  const router = useRouter();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [navQuery, setNavQuery] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Netflix's nav is transparent (fading into the hero) at the very top of
-  // the page and becomes a solid bar once you scroll — replicate that here.
+  
+  const handleNavSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = navQuery.trim();
+    if (!trimmed) return;
+    searchMovies(trimmed);
+    if (pathname !== '/') router.push('/');
+    setSearchOpen(false);
+    setNavQuery('');
+  };
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSearchOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [searchOpen]);
+
+  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -56,7 +98,45 @@ export default function Navbar() {
         </Link>
 
         {user && (
-          <div className="flex items-center gap-3 sm:gap-6 text-sm sm:text-base">
+          <div className="flex items-center gap-2 sm:gap-6 text-sm sm:text-base">
+            <div className="relative" ref={searchRef}>
+              {searchOpen ? (
+                <form onSubmit={handleNavSearchSubmit} className="flex items-center">
+                  <div className="flex items-center bg-black/80 border border-white/25 rounded overflow-hidden animate-fadeIn">
+                    <SearchIcon className="w-4 h-4 ml-3 text-gray-400 shrink-0" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={navQuery}
+                      onChange={(e) => setNavQuery(e.target.value)}
+                      placeholder="Titles, people, genres..."
+                      aria-label="Search for movies"
+                      className="w-32 xs:w-44 sm:w-56 bg-transparent text-white text-sm placeholder-gray-400 py-1.5 px-2 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchOpen(false);
+                        setNavQuery('');
+                      }}
+                      aria-label="Close search"
+                      className="px-2.5 text-gray-400 hover:text-white transition-colors"
+                    >
+                      <XIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  aria-label="Search"
+                  className="text-white/90 hover:text-white transition-colors p-1"
+                >
+                  <SearchIcon className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+
             <Link href="/my-list" className="hidden xs:inline text-white/90 hover:text-white transition-colors">
               My List
             </Link>

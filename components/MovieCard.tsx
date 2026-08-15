@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import PosterImage from './PosterImage';
+import { PlusIcon, CheckIcon } from './icons';
 import type { Movie } from '@/lib/types';
 
 interface MovieCardProps {
@@ -12,8 +13,7 @@ interface MovieCardProps {
 
 export default function MovieCard({ movie }: MovieCardProps) {
   const { user, addFavorite, removeFavorite } = useAuthStore();
-  // Derive favorite status from the store instead of local state, so it
-  // stays correct after a refresh, on other cards, and on /my-list.
+  
   const isFavorite = !!user?.favorites?.includes(movie.imdbID);
 
   const handleFavoriteToggle = async (e: React.MouseEvent) => {
@@ -58,9 +58,15 @@ export default function MovieCard({ movie }: MovieCardProps) {
         <button
           onClick={handleFavoriteToggle}
           aria-label={isFavorite ? 'Remove from My List' : 'Add to My List'}
-          className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
+          aria-pressed={isFavorite}
+          title={isFavorite ? 'Remove from My List' : 'Add to My List'}
+          className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center border transition-all sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 ${
+            isFavorite
+              ? 'bg-white border-white text-black'
+              : 'bg-black/60 border-white/40 text-white hover:border-white'
+          }`}
         >
-          <span className="text-lg">{isFavorite ? '❤️' : '🤍'}</span>
+          {isFavorite ? <CheckIcon className="w-4 h-4" /> : <PlusIcon className="w-4 h-4" />}
         </button>
       )}
     </div>

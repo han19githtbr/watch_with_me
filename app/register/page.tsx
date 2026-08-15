@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import PasswordInput from '@/components/PasswordInput';
 import Link from 'next/link';
 
 export default function Register() {
@@ -62,12 +63,11 @@ export default function Register() {
               className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
               required
             />
-            <input
-              type="password"
+            <PasswordInput
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-neutral-800 border border-white/10 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red"
+              autoComplete="new-password"
               required
               minLength={6}
             />

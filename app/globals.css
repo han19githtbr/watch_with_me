@@ -7,6 +7,30 @@
   body {
     @apply bg-netflix-dark text-white;
   }
+
+  /* Thin, dark scrollbar (Firefox) instead of the browser's default light
+     one, matching Netflix's own understated chrome. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) #141414;
+  }
+
+  /* Same idea for Chromium/WebKit browsers. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #141414;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    border: 2px solid #141414;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.32);
+  }
 }
 
 @layer components {

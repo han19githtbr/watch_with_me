@@ -4,10 +4,10 @@ import { getMovieDetails } from '@/lib/omdb';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }  // ← Adicionar Promise
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
-    const { id } = await params;  // ← Aguardar params
+    const { id } = await params; 
     const movie = await getMovieDetails(id);
     
     if (!movie) {

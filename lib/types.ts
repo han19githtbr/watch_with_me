@@ -1,5 +1,4 @@
 // lib/types.ts
-// Shared shapes for data coming back from the OMDb API.
 
 export interface Movie {
   imdbID: string;

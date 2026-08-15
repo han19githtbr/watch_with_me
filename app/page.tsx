@@ -33,7 +33,7 @@ export default function Home() {
     if (isAuthenticated && user) {
       loadFavorites();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -73,11 +73,11 @@ export default function Home() {
       <Navbar />
 
       <div className={heroMovie && !isSearching ? '' : 'pt-16'}>
-        {/* Hero Banner (hidden while a search is active) */}
+        
         {heroMovie && !isSearching && (
           <div className="relative h-[62vh] sm:h-[75vh] md:h-[85vh] mb-6 sm:mb-10 overflow-hidden bg-netflix-dark">
             {heroMovie.Poster && heroMovie.Poster !== 'N/A' && (
-              // eslint-disable-next-line @next/next/no-img-element -- decorative, heavily blurred background; a broken image here just falls back to the gradient beneath it
+              
               <img
                 src={heroMovie.Poster}
                 alt=""
@@ -88,8 +88,7 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full object-cover object-top scale-110 blur-2xl opacity-60"
               />
             )}
-            {/* Netflix-style layered gradients: dark on the left for text
-                legibility, and a fade at the bottom into the page background. */}
+            
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-netflix-dark via-transparent to-black/20" />
 

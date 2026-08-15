@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
 import Login from '@/components/Auth/Login';
 import PosterImage from '@/components/PosterImage';
+import { PlusIcon, CheckIcon } from '@/components/icons';
 import type { MovieDetails } from '@/lib/types';
 
 export default function MovieDetailsPage() {
@@ -85,12 +86,10 @@ export default function MovieDetailsPage() {
   return (
     <div className="min-h-screen bg-netflix-dark">
       <Navbar />
-
-      {/* Backdrop hero, mirroring the look of the Home banner so a title's
-          detail page feels like part of the same product, not a bare form. */}
+      
       <div className="relative h-[38vh] sm:h-[46vh] overflow-hidden bg-netflix-dark">
         {hasPoster && (
-          // eslint-disable-next-line @next/next/no-img-element -- decorative, heavily blurred background; a broken image here just falls back to the gradient beneath it
+          
           <img
             src={movie.Poster}
             alt=""
@@ -124,8 +123,17 @@ export default function MovieDetailsPage() {
               />
             </div>
             {user && (
-              <button onClick={handleFavoriteToggle} className="w-full netflix-button mt-4">
-                {isFavorite ? 'Remove from My List ❤️' : 'Add to My List 🤍'}
+              <button
+                onClick={handleFavoriteToggle}
+                aria-pressed={isFavorite}
+                className={`w-full mt-4 inline-flex items-center justify-center gap-2 font-bold py-2.5 px-5 rounded transition-colors ${
+                  isFavorite
+                    ? 'bg-white/10 hover:bg-white/15 text-white border border-white/30'
+                    : 'netflix-button'
+                }`}
+              >
+                {isFavorite ? <CheckIcon className="w-4 h-4" /> : <PlusIcon className="w-4 h-4" />}
+                {isFavorite ? 'Remove from My List' : 'Add to My List'}
               </button>
             )}
           </div>

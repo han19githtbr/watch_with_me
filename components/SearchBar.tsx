@@ -33,7 +33,7 @@ export default function SearchBar() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [query]);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -48,7 +48,7 @@ export default function MyListPage() {
     };
 
     fetchFavorites();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
