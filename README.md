@@ -5,7 +5,7 @@ Catálogo de filmes inspirado na Netflix, construído como teste técnico para o
 ## Funcionalidades
 
 - Cadastro e login de usuário (JWT + senha com hash bcrypt), com botão de mostrar/ocultar senha nos dois formulários
-- Avatar do usuário logado: como o login é feito com e-mail/senha (não há OAuth do Google/Gmail), a barra de navegação exibe um avatar gerado a partir do nome/e-mail do usuário (mesma cor/iniciais sempre, sem chamadas externas) — veja a nota sobre isso em [GUIA.md](./GUIA.md#5-avatar-do-usuário)
+- Avatar do usuário logado: como o login é feito com e-mail/senha (não há OAuth do Google/Gmail), a barra de navegação exibe um avatar gerado a partir do nome/e-mail do usuário (mesma cor/iniciais sempre, sem chamadas externas)
 - Catálogo com banner de destaque e carrosséis por categoria
 - Busca de títulos consumindo a OMDb API, com **busca automática/instantânea**: os resultados aparecem enquanto você digita (a partir de 2 letras, com debounce), sem precisar apertar Enter, priorizando títulos que começam com o texto digitado — disponível tanto na Home quanto em um ícone de lupa na barra de navegação, acessível de qualquer página
 - Página de detalhes (pôster, sinopse, elenco, ano, nota IMDb), com fundo desfocado ("hero") a partir do pôster do título
@@ -17,7 +17,6 @@ Catálogo de filmes inspirado na Netflix, construído como teste técnico para o
 
 Next.js (App Router) · TypeScript · React 19 · Tailwind CSS · MongoDB/Mongoose · JWT · bcryptjs · Zustand
 
-Veja o [GUIA.md](./GUIA.md) para uma explicação detalhada de cada tecnologia e de como elas se conectam.
 
 ## Pré-requisitos
 
@@ -49,7 +48,7 @@ cp .env.example .env.local
 
 `.env.local` nunca deve ser commitado — já está no `.gitignore`.
 
-> `.env.example` também traz `NEXTAUTH_URL`. Ela **não é lida em nenhum lugar do código atual** (a aplicação não usa NextAuth, só JWT próprio) — está lá apenas como referência para uma futura evolução com login social (veja [GUIA.md, seção "Avatar do usuário"](./GUIA.md#5-avatar-do-usuário)). Você pode deixá-la de fora sem nenhum impacto.
+> `.env.example` também traz `NEXTAUTH_URL`. Ela **não é lida em nenhum lugar do código atual** (a aplicação não usa NextAuth, só JWT próprio) — está lá apenas como referência para uma futura evolução com login social.
 
 **Erro comum ao configurar essas variáveis na Vercel:** cole o valor de `MONGODB_URI` sem aspas em volta e sem espaço/quebra de linha antes ou depois — se o Mongoose receber algo que não começa exatamente com `mongodb://` ou `mongodb+srv://`, o login/cadastro falha com "Internal server error" (`MongoParseError: Invalid scheme`). Como campos "Sensitive" na Vercel não mostram o valor salvo de volta para edição, se desconfiar de um valor colado errado, apague o conteúdo do campo Value e cole de novo do zero.
 
@@ -64,12 +63,14 @@ Abra http://localhost:3000 no navegador.
 ### Criando uma conta para login
 
 Você pode se cadastrar normalmente pela tela de "Sign up", ou criar uma conta de demonstração pronta rodando:
+O e-mail cadastrado precisa ser válido(ex: `teste@gmail.com`), mas não precisa ser o e-mail de uma conta real da Google por exemplo ou outro provedor.
+
 
 ```bash
 npm run seed
 ```
 
-Isso cria (ou reseta a senha de) um usuário de teste no seu banco configurado em `MONGODB_URI`. As credenciais geradas ficam documentadas no [GUIA.md](./GUIA.md).
+Isso cria (ou reseta a senha de) um usuário de teste no seu banco configurado em `MONGODB_URI`.
 
 ## Como fazer login e cadastro (localmente e em produção)
 
@@ -80,7 +81,7 @@ A autenticação (e-mail/senha + JWT) é a mesma em qualquer ambiente — não h
 1. Configure o `.env.local` (veja [Variáveis de ambiente](#variáveis-de-ambiente) acima).
 2. Rode `npm run dev` e abra http://localhost:3000 — a aplicação leva direto para a tela de login.
 3. Para entrar, você tem duas opções:
-   - **Criar sua própria conta:** clique em "Sign up now", preencha nome/e-mail/senha e envie. Você é logado automaticamente após o cadastro.
+   - **Criar sua própria conta:** clique em "Sign up now", preencha nome/e-mail/senha e envie. Você é logado automaticamente após o cadastro. O e-mail precisa ser válido, mas não precisa ser um e-mail de uma conta real da Google por exemplo. 
    - **Usar a conta de demonstração:** rode `npm run seed` (uma única vez) para criar `demo@watchwithme.com` / `Demo@12345` no banco apontado pelo seu `MONGODB_URI`, e faça login com essas credenciais na tela inicial.
 
 ### Em produção (Vercel)
@@ -89,7 +90,7 @@ A autenticação (e-mail/senha + JWT) é a mesma em qualquer ambiente — não h
 2. **Libere o acesso de rede no MongoDB Atlas:** em Atlas → Network Access → Add IP Address → `0.0.0.0/0` ("Allow access from anywhere"). A Vercel usa IPs dinâmicos em cada execução serverless, então restringir por IP fixo bloqueia a conexão em produção.
 3. Faça o deploy (import do repositório na Vercel) e acesse a URL gerada, ex.: `https://<seu-projeto>.vercel.app`.
 4. Para entrar, as mesmas duas opções da versão local funcionam diretamente na URL de produção:
-   - **Qualquer pessoa avaliando o projeto** (recrutador, outros usuários) pode clicar em "Sign up now" na própria tela de produção e criar uma conta na hora — não é necessário nenhuma credencial especial.
+   - **O usuário pode clicar em "Sign up now" na própria tela de produção e criar uma conta na hora — não é necessário nenhuma credencial especial.
    - Se `MONGODB_URI` em produção apontar para o **mesmo cluster Atlas** usado localmente, a conta demo criada com `npm run seed` (localmente) também funciona para login em produção, já que é o mesmo banco.
 
 > Se o login funcionar localmente mas retornar "Internal server error" em produção, o motivo quase sempre é um dos dois primeiros passos acima (env var faltando ou IP bloqueado no Atlas) — confira os logs da função em Vercel → Deployments → seu deploy → Functions para confirmar.
@@ -103,7 +104,7 @@ npm start
 
 ## Deploy
 
-O deploy do projeto está feito na [Vercel](https://watch-with-me-pi.vercel.app/): basta importar o repositório e configurar `MONGODB_URI`, `JWT_SECRET` e `OMDB_API_KEY` nas variáveis de ambiente do projeto na Vercel (Project Settings → Environment Variables).
+O deploy do projeto está feito na [Vercel] no endereço:(https://watch-with-me-pi.vercel.app/): basta importar o repositório e configurar `MONGODB_URI`, `JWT_SECRET` e `OMDB_API_KEY` nas variáveis de ambiente do projeto na Vercel (Project Settings → Environment Variables).
 
 ## Scripts disponíveis
 
