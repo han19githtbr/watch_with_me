@@ -141,6 +141,12 @@ export default function Navbar() {
               My List
             </Link>
 
+            {user.role === 'admin' && (
+              <Link href="/admin" className="hidden sm:inline text-white/90 hover:text-white transition-colors">
+                Admin
+              </Link>
+            )}
+
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -180,6 +186,15 @@ export default function Navbar() {
                   >
                     My List
                   </Link>
+                  {user.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMenuOpen(false)}
+                      className="sm:hidden block px-4 py-2.5 text-white hover:bg-white/10 transition-colors"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       setMenuOpen(false);

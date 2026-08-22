@@ -40,12 +40,33 @@ export async function POST(request: Request) {
       { expiresIn: '7d' }
     );
 
+    // Record this login as a new access-history entry so the admin
+    // screen can show last access and approximate session length.
+    // Kept capped so the array doesn't grow forever for long-lived
+    // accounts.
+    const now = new Date();
+    user.accessLogs = user.accessLogs || [];
+    user.accessLogs.push({
+      loginAt: now,
+      lastActiveAt: now,
+      userAgent: request.headers.get('user-agent') || '',
+      ip:
+        request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+        request.headers.get('x-real-ip') ||
+        '',
+    });
+    if (user.accessLogs.length > 100) {
+      user.accessLogs = user.accessLogs.slice(-100);
+    }
+    await user.save();
+
     return NextResponse.json({
       token,
       user: {
         id: user._id,
         email: user.email,
         name: user.name,
+        role: user.role || 'user',
         favorites: user.favorites || []
       }
     });

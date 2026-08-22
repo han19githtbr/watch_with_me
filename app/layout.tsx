@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import { Inter, Bebas_Neue } from 'next/font/google'
 import './globals.css'
+import ActivityTracker from '@/components/ActivityTracker'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' })
 
@@ -19,7 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="bg-netflix-dark">
-      <body className={`${inter.variable} ${bebasNeue.variable} font-sans`}>{children}</body>
+      <body className={`${inter.variable} ${bebasNeue.variable} font-sans`}>
+        <ActivityTracker />
+        {children}
+      </body>
     </html>
   )
 }

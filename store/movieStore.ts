@@ -1,6 +1,7 @@
 // store/movieStore.ts
 import { create } from 'zustand';
 import type { Movie, MovieDetails } from '@/lib/types';
+import { useAuthStore } from '@/store/authStore';
 
 interface MovieState {
   movies: Movie[];
@@ -52,6 +53,21 @@ export const useMovieStore = create<MovieState>((set, get) => ({
       });
 
       set({ movies, loading: false });
+
+      // Best-effort activity log for the admin panel's "most searched"
+      // view. Only recorded for signed-in users and never awaited, so
+      // it can't slow down or break the search itself.
+      const { token, isAuthenticated } = useAuthStore.getState();
+      if (isAuthenticated && token) {
+        fetch('/api/activity/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query: trimmed }),
+        }).catch(() => {});
+      }
     } catch {
       set({ error: 'Failed to search movies', loading: false, movies: [] });
     }

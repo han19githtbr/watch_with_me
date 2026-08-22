@@ -15,7 +15,7 @@ export default function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const { user, isAuthenticated, addFavorite, removeFavorite } = useAuthStore();
+  const { user, token, isAuthenticated, addFavorite, removeFavorite } = useAuthStore();
 
   const isFavorite = !!user?.favorites?.includes(id as string);
 
@@ -28,6 +28,25 @@ export default function MovieDetailsPage() {
         const response = await fetch(`/api/movies/${id}`);
         const data = await response.json();
         setMovie(response.ok ? data : null);
+
+        // Record this as a view so the admin panel can show what each
+        // user watches most (by title and by genre). Best-effort —
+        // never blocks or affects what the person sees.
+        if (response.ok && data && token) {
+          fetch('/api/activity/view', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              movieId: id,
+              title: data.Title,
+              genre: data.Genre,
+              poster: data.Poster,
+            }),
+          }).catch(() => {});
+        }
       } catch (error) {
         console.error('Error fetching movie:', error);
         setMovie(null);
@@ -39,6 +58,7 @@ export default function MovieDetailsPage() {
     if (id) {
       fetchMovie();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- token is read for a fire-and-forget log call, not something this effect needs to re-run for
   }, [id, isAuthenticated]);
 
   if (!isAuthenticated) {
